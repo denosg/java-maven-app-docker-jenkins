@@ -30,8 +30,8 @@ pipeline {
         stage('build image') {
             steps {
                 script {
-                    echo "building the docker image..."
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]){
+                    echo 'building the docker image...'
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                         sh "docker build -t nanatwn/demo-app:${IMAGE_NAME} ."
                         sh 'echo $PASS | docker login -u $USER --password-stdin'
                         sh "docker push nanatwn/demo-app:${IMAGE_NAME}"
@@ -46,10 +46,10 @@ pipeline {
                 }
             }
         }
-        stage('commit version update'){
+        stage('commit version update') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'gitlab-credentials', passwordVariable: 'PASS', usernameVariable: 'USER')]){
+                    withCredentials([usernamePassword(credentialsId: 'gitlab-credentials', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                         sh 'git config --global user.email "jenkins@example.com"'
                         sh 'git config --global user.name "jenkins"'
 
@@ -64,7 +64,6 @@ pipeline {
                     }
                 }
             }
-         }
         }
     }
 }
