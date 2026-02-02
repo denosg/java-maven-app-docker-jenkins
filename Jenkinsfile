@@ -1,35 +1,38 @@
-def gv
-
 pipeline {
     agent any
 
-    stages  {
-        stage('init') {
+    tools {
+        maven 'maven-3.9'
+    }
+
+    environment {
+        IMAGE_NAME = "denoscos/demo-app-devops:jma-2.0"
+    }
+
+    stages {
+
+        stage('Build JAR') {
             steps {
-                script {
-                    gv = load 'script.groovy'
+                echo 'Building application...'
+                sh 'mvn package'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-repo', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh "docker build -t ${IMAGE_NAME} ."
+                    sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
+                    sh "docker push ${IMAGE_NAME}"
                 }
             }
         }
-        stage('build') {
+
+        stage('Deploy') {
             steps {
-                script {
-                    gv.buildApp()
-                }
-            }
-        }
-        stage('test') {
-            steps {
-                script {
-                    gv.testApp()
-                }
-            }
-        }
-        stage('deploy') {
-            steps {
-                script {
-                    gv.deployApp()
-                }
+                echo 'Deploy stage is empty for now'
             }
         }
     }
