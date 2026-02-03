@@ -35,5 +35,11 @@ pipeline {
                 echo 'Deploy stage is empty for now'
             }
         }
+
+        stage('Cleanup') {
+            steps {
+                echo 'Cleanup...'
+            }
+        }
     }
 }
